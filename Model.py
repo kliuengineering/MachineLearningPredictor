@@ -16,6 +16,9 @@ October 29, 2024
     - Adding epochs algorithm for incremental Taylor expansion.
     - Caching the already-computed epochs.
 
+November 1, 2024
+    - Added predictor.
+
 """
 
 from abc import ABC, abstractmethod
@@ -44,7 +47,7 @@ class Model(ABC):
 # concrete strategy A
 class TaylorModel(Model):
     """ parametric constructor. """
-    def __init__(self, frequency=50.0, steps=360, tolerance=0.001) -> None:
+    def __init__(self, frequency=50.0, steps=360, tolerance=0.001):
         self.name = "Taylor Model"
         self.PI = 3.141592653589793238
         self.frequency = frequency
@@ -127,11 +130,23 @@ class TaylorModel(Model):
             return True
         
     """ Prediction by the trained model. """
-    def predict(self, x: float):
+    def predict(self, x: float | list, in_degrees: bool = False) -> dict:
         if not self.model_is_trained:
             raise ValueError("Model is not trained yet... Please train the model before making predictions...")
+        
+        # checks for degree / radian
+        if in_degrees:
+            if isinstance(x, float):
+                x = x * self.PI / 180
+            elif isinstance(x, list):
+                x = [ itr * self.PI / 180 for itr in x ]
+        
         else:
-            return self._trained_model(x, self.epochs + 1)             # max # of terms is basically the epochs + 1
+            if isinstance(x, float):
+                return { x: self._trained_model(x, self.epochs + 1) }           # max # of terms is basically the epochs + 1
+            if isinstance(x, list):
+                # return [ self._trained_model(itr, self.epochs + 1) for itr in x ]
+                return { angle: self._trained_model(angle, self.epochs + 1) for angle in x }
 
     """ gets the name of the model """    
     def get_name(self) -> str:
@@ -175,12 +190,17 @@ class MachineLearningModel:
         iteration = 0
         while (self.model.train() == False) and (iteration < self.MAX_ITERATION):
             iteration += 1
+
+    """ selected model prediction, takes in a single float or an array of floats """
+    def predict(self, x: float | list) -> dict:
+        return self.model.predict(x)
     
 
 def main():
     model = MachineLearningModel()
     model.mount_model()
     model.execute()
+    print(model.predict([0.2, 0.4, 0.6]))
 
 
 if __name__ == "__main__":
