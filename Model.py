@@ -12,10 +12,15 @@ October 28, 2024
     - Bug fixes
         + Added input validation and test cases.
 
+October 29, 2024
+    - Adding epochs algorithm for incremental Taylor expansion.
+    - Caching the already-computed epochs.
+
 """
 
 from abc import ABC, abstractmethod
 import math
+
 
 # << interface >>, abstract strategy
 class Model(ABC):
@@ -25,6 +30,14 @@ class Model(ABC):
     
     @abstractmethod
     def error_analysis(self):
+        pass
+
+    @abstractmethod
+    def predict(self):
+        pass
+
+    @abstractmethod
+    def get_name(self):
         pass
 
 
@@ -40,23 +53,61 @@ class TaylorModel(Model):
         self.angular_velocity = 2.0 * self.PI * self.frequency
         self.period = 1.0 / self.frequency
         self.TOLERANCE = tolerance
+        self.cost = float("inf")
+        self.epochs = 0
+        self.model_is_trained = False
 
-    """ private -> computes Taylor expansion """
-    def _compute(self, x: float, tolerance: float) -> float:
-        pass
+    """ private computational methods -> for Taylor expansion """
+    def _power(self, x: float, n: int) -> float:
+        result = 1.0
+        for _ in range(n):
+            result *= x
+        return result
+    
+    def _factorial(self, x: int) -> int:
+        if x <= 1:
+            return x
+        else:
+            return x * self._factorial(x-1)
+
+    def _compute(self, x: float) -> float:
+        result = 0.0
+
+        for n in range(self.epochs):
+            term = (-1)**n * self._power(x, 2*n+1) / self._factorial(2*n+1)
+            result += term
+
+        # self.epochs += 1
+        return result
+    
+    """ private computational methods -> the trained Taylor expansion model. """
+    def _trained_model(self, x: float, expansion_terms: int) -> float:
+        result = 0.0
+
+        for n in range(expansion_terms):
+            current_term = (-1)**n * self._power(x, 2*n + 1) / self._factorial(2*n + 1)
+            result += current_term
+        return result
 
     """ Trains the model using Taylor Series approximation. """
-    def train(self) -> None:
+    def train(self) -> bool:
         for i in range(self.steps // 4 + 1):                        # 1st quadrant approximation
             time = self.period * i / self.steps
             x = self.angular_velocity * time                        # angular displacement
-            self.weights[i] = x                                     # caches angular displacement
+            self.weights[i] = self._compute(x)                      # training epoc begins here
 
         for i in range(self.steps // 4, self.steps // 2):           # 2nd quadrant approximation
             self.weights[i] = self.weights[self.steps // 2 - i]     # odd function symmetry
 
         for i in range(self.steps // 2, self.steps):                # 3th + 4th quadrant approximation
             self.weights[i] = -self.weights[i - self.steps // 2]    # odd function symmetry again
+
+        if self.error_analysis():
+            self.model_is_trained = True
+            return True
+        else:
+            self.epochs += 1                                        # increments epoch if not converged
+            return False
 
     """ Analyzes the error using standard deviation. """
     def error_analysis(self) -> bool:
@@ -69,11 +120,18 @@ class TaylorModel(Model):
         std_dev = math.sqrt( diff_sum / (self.steps - 1) )          # n-1 sample
 
         if std_dev > self.TOLERANCE:
-            print(f"\nstdDev: {std_dev}\nERROR: The training model is inaccurate!\n")
+            print(f"stdDev: {std_dev}, epochs: {self.epochs + 1}\nERROR: The training model is inaccurate!\n")
             return False
         else:
-            print("The training model is accurate.\n")
+            print(f"The training model is accurate with stdDev: {std_dev} and epochs: {self.epochs + 1}\n")
             return True
+        
+    """ Prediction by the trained model. """
+    def predict(self, x: float):
+        if not self.model_is_trained:
+            raise ValueError("Model is not trained yet... Please train the model before making predictions...")
+        else:
+            return self._trained_model(x, self.epochs + 1)             # max # of terms is basically the epochs + 1
 
     """ gets the name of the model """    
     def get_name(self) -> str:
@@ -82,10 +140,10 @@ class TaylorModel(Model):
 
 # Context (interface) for the client side
 class MachineLearningModel:
-    def __init__(self, model: Model | None = None):
+    def __init__(self, model: Model | None = None, max_iteration=10000):
         self.model = model
-        self.cost = float("inf")                                    # we assign the cost to be inf. to start with
-
+        self.MAX_ITERATION = max_iteration
+        
     def __str__(self) -> str:
         return f"Current model is set to -> {self.model.get_name()}\n"
 
@@ -93,7 +151,6 @@ class MachineLearningModel:
     def _set_model(self, model_type:str) -> bool:
         if int(model_type) == 1:
             self.model = TaylorModel()
-            self.cost = float("inf")                                # initializes the cost every time we set a new model
             print(self)
             return True
         else:
@@ -111,18 +168,18 @@ class MachineLearningModel:
         if self.model:
             return True
         else:
-            exit("\nError mounting the model, abort routine...\n")
+            raise TypeError("Invalid model selection, aborting...\n")
 
-    """ user invoked method -> main execution of the model """        
-    def execute(self) ->  bool:
-        self.mount_model()
-        self.model.train()
-        
-        rc = self.model.error_analysis()
+    """ controller invoked method -> main execution of the model """        
+    def execute(self) -> bool:
+        iteration = 0
+        while (self.model.train() == False) and (iteration < self.MAX_ITERATION):
+            iteration += 1
     
 
 def main():
     model = MachineLearningModel()
+    model.mount_model()
     model.execute()
 
 
