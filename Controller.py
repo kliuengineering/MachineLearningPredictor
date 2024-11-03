@@ -1,8 +1,16 @@
 """
 
-Observer pattern is used for the controller module of the MVC.
+Authours:
+    - Jasleen Kaur
+    - Kevin Liu
+    - Ma Toan Bach
 
-"""
+Module Description:
+    - This module employs the observer pattern.
+    - This module encapsulates the publisher to the observers (Views).
+    - This module is part of the MVC architecture - Controller.
+
+"""   
 
 
 from abc import ABC, abstractmethod
@@ -10,7 +18,7 @@ from Model import MachineLearningModel
 from Views import MultiView
 
 
-# << interface >>, abstract subscriber
+# << interface >> Abstract Publisher
 class Controller(ABC):
     @abstractmethod
     def attach_view(self):
@@ -33,7 +41,7 @@ class Controller(ABC):
         pass
 
 
-# concrete subscriber for Taylor Approximation
+# Concrete Publisher A
 class TaylorController(Controller):
     def __init__(self):
         self._model = MachineLearningModel()
@@ -59,6 +67,7 @@ class TaylorController(Controller):
         self.notify_views("prediction", prediction)
     
 
+# Driver class for the Client -> interfacing the end Client
 class MachineLearning:
     def __init__(self):
         try:
@@ -73,10 +82,3 @@ class MachineLearning:
         self._controller.make_prediction(input_data)
         self._controller.detach_view()
 
-
-def main():
-    controller = TaylorController()
-
-
-if __name__ == "__main__":
-    main()

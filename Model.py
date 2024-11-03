@@ -1,25 +1,16 @@
 """
 
-Development Log:
+Authours:
+    - Jasleen Kaur
+    - Kevin Liu
+    - Ma Toan Bach
 
-October 25, 2024
-    - Refactored for future scalability;
-      models in general should have training and validation methods.
-        + Employed strategy pattern.
-        + Studied the mechanics of Taylor approximation.
+Module Description:
+    - This module employs the Strategy pattern.
+    - This module encapsulates the business logic.
+    - This module is part of the MVC architecture - Model.
 
-October 28, 2024
-    - Bug fixes
-        + Added input validation and test cases.
-
-October 29, 2024
-    - Adding epochs algorithm for incremental Taylor expansion.
-    - Caching the already-computed epochs.
-
-November 1, 2024
-    - Added predictor.
-
-"""
+"""   
 
 from abc import ABC, abstractmethod
 import math
@@ -195,13 +186,3 @@ class MachineLearningModel:
     def predict(self, x: float | list) -> dict:
         return self.model.predict(x)
     
-
-def main():
-    model = MachineLearningModel()
-    model.mount_model()
-    model.execute()
-    print(model.predict([0.2, 0.4, 0.6]))
-
-
-if __name__ == "__main__":
-    main()

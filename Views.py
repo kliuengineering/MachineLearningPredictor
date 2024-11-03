@@ -1,7 +1,14 @@
 """
-TODO: 
-    1. write the graphical view class
-    2. write the console view class
+
+Authours:
+    - Jasleen Kaur
+    - Kevin Liu
+    - Ma Toan Bach
+
+Module Description:
+    - This module employs the observer pattern.
+    - This module encapsulates the subscribers to the main even manager (Controller).
+    - This module is part of the MVC architecture.
 
 """   
 
@@ -11,14 +18,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-# abstract base class
+# << interface >> Abstract Subscriber
 class View(ABC):
     @abstractmethod
     def update(self):
         pass
 
 
-# concrete implementation A
+# Concrete Subscriber A
 class ConsoleView(View):
     def update(self, message: dict | str):
         print("Console data received...")
@@ -33,7 +40,7 @@ class ConsoleView(View):
             print("")
 
 
-# concrete implementation B
+# Concrete Subscriber B
 class GraphicalView(View):
     def update(self, message: dict | str):
         print("Graphical data received...")
@@ -94,7 +101,7 @@ class GraphicalView(View):
         plt.show()
 
 
-# view manager
+# Driver classs for the Views -> interfacing the Controller
 class MultiView:
     def __init__(self):
         self._view_container = {}
@@ -163,24 +170,3 @@ class MultiView:
             if view is not None:
                 view.update( {"type": type, "data": message} )
 
-"""
-import matplotlib.pyplot as plt
-
-def plot_approximation(self):
-        # Generate the true sine wave
-        x_values = [self.angular_velocity * self.period * i / self.steps for i in range(self.steps)]
-        true_sine = [math.sin(x) for x in x_values]
-
-        # Plot the Taylor approximation
-        plt.plot(x_values, self.weights, label=f"Taylor Approximation (Epoch {self.epochs + 1})")
-        plt.plot(x_values, true_sine, label="True Sine Wave", linestyle="--", color="gray")
-        plt.xlabel("Angle (radians)")
-        plt.ylabel("Sine Value")
-        plt.title("Taylor Series Approximation vs True Sine Wave")
-        plt.legend()
-        plt.grid(True)
-        plt.show()
-
-    # Plot the current approximation after each epoch
-    self.plot_approximation()
-"""
