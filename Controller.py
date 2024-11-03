@@ -57,9 +57,9 @@ class TaylorController(Controller):
     def notify_views(self, type: str, message: float | list | str) -> None:
         self._views.notify(type, message)
 
-    def train_model(self) -> None:
+    def train_model(self, debug: bool = False) -> None:
         self._model.mount_model()
-        self._model.execute()
+        self._model.execute(debug)       
         self.training_complete = 1
 
     def make_prediction(self, x: float | list) -> None:
@@ -69,16 +69,22 @@ class TaylorController(Controller):
 
 # Driver class for the Client -> interfacing the end Client
 class MachineLearning:
-    def __init__(self):
+    def __init__(self, debug: bool = False):
+        self._instantiation = False
+        self._debug = debug
         try:
             self._controller = TaylorController()
+            self._instantiation = True
         except:
-            raise ValueError("Exception occurred at run time, abort routine...\n")
+            pass
     
     def run(self, input_data: list) -> None:
         if not self._controller.training_complete:
-            self._controller.train_model()
+            self._controller.train_model(self._debug)               
         self._controller.attach_view()
         self._controller.make_prediction(input_data)
         self._controller.detach_view()
+
+    def instantiation_success(self) -> bool:
+        return self._instantiation
 

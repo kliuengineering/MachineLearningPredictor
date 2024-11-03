@@ -13,6 +13,7 @@ Module Description:
 """   
 
 from abc import ABC, abstractmethod
+import matplotlib.pyplot as plt
 import math
 
 
@@ -84,7 +85,7 @@ class TaylorModel(Model):
         return result
 
     """ Trains the model using Taylor Series approximation. """
-    def train(self) -> bool:
+    def train(self, debug: bool = False) -> bool:
         for i in range(self.steps // 4 + 1):                        # 1st quadrant approximation
             time = self.period * i / self.steps
             x = self.angular_velocity * time                        # angular displacement
@@ -95,6 +96,11 @@ class TaylorModel(Model):
 
         for i in range(self.steps // 2, self.steps):                # 3th + 4th quadrant approximation
             self.weights[i] = -self.weights[i - self.steps // 2]    # odd function symmetry again
+
+        # Plot the current approximation after each epoch, only invoked in DEBUG mode
+        if debug:
+            self.plot_approximation()
+            print("")
 
         if self.error_analysis():
             self.model_is_trained = True
@@ -139,6 +145,22 @@ class TaylorModel(Model):
                 # return [ self._trained_model(itr, self.epochs + 1) for itr in x ]
                 return { angle: self._trained_model(angle, self.epochs + 1) for angle in x }
 
+    """ only used in the debug mode """
+    def plot_approximation(self):
+        # Generate the true sine wave
+        x_values = [self.angular_velocity * self.period * i / self.steps for i in range(self.steps)]
+        true_sine = [math.sin(x) for x in x_values]
+
+        # Plot the Taylor approximation
+        plt.plot(x_values, self.weights, label=f"Taylor Approximation (Epoch {self.epochs + 1})")
+        plt.plot(x_values, true_sine, label="True Sine Wave", linestyle="--", color="gray")
+        plt.xlabel("Angle (radians)")
+        plt.ylabel("Sine Value")
+        plt.title("Taylor Series Approximation vs True Sine Wave")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+    
     """ gets the name of the model """    
     def get_name(self) -> str:
         return self.name
@@ -177,9 +199,9 @@ class MachineLearningModel:
             raise TypeError("Invalid model selection, aborting...\n")
 
     """ controller invoked method -> main execution of the model """        
-    def execute(self) -> bool:
+    def execute(self, debug: bool = False) -> bool:
         iteration = 0
-        while (self.model.train() == False) and (iteration < self.MAX_ITERATION):
+        while (self.model.train(debug) == False) and (iteration < self.MAX_ITERATION): # here
             iteration += 1
 
     """ selected model prediction, takes in a single float or an array of floats """
