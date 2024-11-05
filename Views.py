@@ -110,7 +110,9 @@ class MultiView:
         print("Choose a view to be attached: \n",
                 "\t[1] Console View \n",
                 "\t[2] Graphical View \n",
-                "\t[3] Both Views\n")
+                "\t[3] Both Views \n",
+                "\t[4] Do Nothing \n")
+
         try:
             view_type = int( input("Your choice is -> ") )
         except ValueError:
@@ -128,6 +130,9 @@ class MultiView:
             self._view_container["console"] = ConsoleView()
             self._view_container["graphical"] = GraphicalView()
             print("attached console and graphical views successfully.\n")
+        
+        elif view_type == 4:
+            pass
 
         else:
             raise TypeError("Unrecognizable view attachment, abort routine...")
@@ -138,7 +143,8 @@ class MultiView:
         print("Choose a view to be detach: \n",
                 "\t[1] Console View \n",
                 "\t[2] Graphical View \n",
-                "\t[3] Both Views\n")
+                "\t[3] Both Views \n", 
+                "\t[4] Do Nothing \n")
         
         try:
             user_input = int(input("Your choice is -> "))
