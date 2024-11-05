@@ -37,7 +37,7 @@ class Controller(ABC):
         pass
 
     @abstractmethod
-    def make_prediction(self, x:float):
+    def make_prediction(self):
         pass
 
 

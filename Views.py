@@ -115,6 +115,7 @@ class MultiView:
 
         try:
             view_type = int( input("Your choice is -> ") )
+            print("")
         except ValueError:
             exit("Invalid input, please enter a number next time...\n")
 
@@ -148,6 +149,7 @@ class MultiView:
         
         try:
             user_input = int(input("Your choice is -> "))
+            print("")
             view_type = view_mapping.get(user_input)
         except ValueError:
             exit("Invalid input, please enter a number next time...\n")     
