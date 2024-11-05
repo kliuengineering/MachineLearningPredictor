@@ -186,11 +186,6 @@ class MachineLearningModel:
 
     """ user invoked method -> chooses a model to mount """
     def mount_model(self, model_type: int) -> bool:
-        # print(             "Choose a model to mount: \n",
-        #                    "\t[1] Taylor Approximation \t(available) \n",
-        #                    "\t[2] Polynomial Regression \t(under development) \n")             
-        # model_type = input("Your choice is -> ")
-
         self._set_model(model_type)
         
         if self.model:

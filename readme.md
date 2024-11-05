@@ -12,8 +12,16 @@
 - Practiced XP implementation from Agile. 
 
 ## Class UML
+![Description of UML Diagram](./assets/UML.png)
 
 ## Model Training
+<div style="display: flex; flex-direction: column; align-items: center;">
+    <img src="./assets/img1.png" alt="Image 1">
+    <img src="./assets/img2.png" alt="Image 2">
+    <img src="./assets/img3.png" alt="Image 3">
+    <img src="./assets/img4.png" alt="Image 4">
+    <img src="./assets/img5.png" alt="Image 5">
+</div>
 
 ## Installation
 - You would need to ensure all required modules are installed before running the codes.
