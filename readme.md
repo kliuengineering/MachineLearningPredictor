@@ -11,6 +11,12 @@
 - Explored ways to implement naive machine learning modelling technique.
 - Practiced XP implementation from Agile. 
 
+## Installation
+- You would need to ensure all required modules are installed before running the codes.
+    + $pip install -r requirements.txt
+- After installation, run the following command:
+    + $python Client.py
+
 ## Class UML
 ![Description of UML Diagram](./assets/UML.png)
 
@@ -22,12 +28,6 @@
     <img src="./assets/img4.png" alt="Image 4">
     <img src="./assets/img5.png" alt="Image 5">
 </div>
-
-## Installation
-- You would need to ensure all required modules are installed before running the codes.
-    + $pip install -r requirements.txt
-- After installation, run the following command:
-    + $python Client.py
 
 ## Questions to be Addressed
 1. The production codes shall be translated to C/C++ due to performance considerations and libraries limitation on the ecosystems of embedded devices. C/C++ allows fine-tuning over memory management, where reduced memory usage and improved speed can be achieved. On the contrary, Python is naturally slower due to its interpreted nature, and C#/Java run on JVM and CLR respectively, which add overhead compared to C/C++.
