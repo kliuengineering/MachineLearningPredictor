@@ -15,6 +15,8 @@ Module Description:
 from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
 import math
+from typing import Union
+from typing import Optional
 
 
 # << interface >>, abstract strategy
@@ -127,7 +129,7 @@ class TaylorModel(Model):
             return True
         
     """ Prediction by the trained model. """
-    def predict(self, x: float | list, in_degrees: bool = False) -> dict:
+    def predict(self, x: Union[float, list], in_degrees: bool = False) -> dict:
         if not self.model_is_trained:
             raise ValueError("Model is not trained yet... Please train the model before making predictions...")
         
@@ -168,7 +170,7 @@ class TaylorModel(Model):
 
 # Context (interface) for the client side
 class MachineLearningModel:
-    def __init__(self, model: Model | None = None, max_iteration=10000):
+    def __init__(self, model: Optional[Model] = None, max_iteration=10000):
         self.model = model
         self.MAX_ITERATION = max_iteration
         
@@ -200,6 +202,6 @@ class MachineLearningModel:
             iteration += 1
 
     """ selected model prediction, takes in a single float or an array of floats """
-    def predict(self, x: float | list) -> dict:
+    def predict(self, x: Union[float, list]) -> dict:
         return self.model.predict(x)
     

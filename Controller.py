@@ -16,6 +16,7 @@ Module Description:
 from abc import ABC, abstractmethod
 from Model import MachineLearningModel
 from Views import MultiView
+from typing import Union
 
 
 # << interface >> Abstract Publisher
@@ -54,7 +55,7 @@ class TaylorController(Controller):
     def detach_view(self) -> None:
         self._views.detach_view()
 
-    def notify_views(self, type: str, message: float | list | str) -> None:
+    def notify_views(self, type: str, message: Union[float, list, str]) -> None:
         self._views.notify(type, message)
 
     def train_model(self, model = None, debug: bool = False) -> None:
@@ -62,7 +63,7 @@ class TaylorController(Controller):
         self._model.execute(debug)       
         self.training_complete = 1
 
-    def make_prediction(self, x: float | list) -> None:
+    def make_prediction(self, x: Union[float, list]) -> None:
         prediction = self._model.predict(x)
         self.notify_views("prediction", prediction)
     

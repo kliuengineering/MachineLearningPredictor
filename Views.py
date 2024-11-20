@@ -16,6 +16,7 @@ Module Description:
 from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
 import numpy as np
+from typing import Union
 
 
 # << interface >> Abstract Subscriber
@@ -27,7 +28,7 @@ class View(ABC):
 
 # Concrete Subscriber A
 class ConsoleView(View):
-    def update(self, message: dict | str):
+    def update(self, message: Union[dict, str]):
         print("Console data received...")
 
         if isinstance(message, str):
@@ -42,7 +43,7 @@ class ConsoleView(View):
 
 # Concrete Subscriber B
 class GraphicalView(View):
-    def update(self, message: dict | str):
+    def update(self, message: Union[dict, str]):
         print("Graphical data received...")
 
         if isinstance(message, str):
@@ -173,7 +174,7 @@ class MultiView:
         else:
             print("View does not exist or invalid choice.\n")
 
-    def notify(self, type: str, message: dict | str) -> None:
+    def notify(self, type: str, message: Union[dict, str]) -> None:
         for view in self._view_container.values():
             if view is not None:
                 view.update( {"type": type, "data": message} )
